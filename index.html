@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Google Calendar ics to CSV</title>
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="index.js"></script>
+  <style type="text/css">
+  h3 {
+    color: #2D866C;
+  }
+  kbd {
+    color: #222;
+    background-color: #ddd;
+  }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1 class="page-header">Google 日曆 ics 轉 Excel/CSV</h1>
+    <div class="row">
+      <div class="col-xs-12 col-md-6">
+        <h3>1. 使用支援 ES6 之瀏覽器</h3>
+        <p>請使用最新版 <a href="https://www.google.com.tw/chrome/browser/desktop/" target="_blank">Google Chrome</a> 或 <a href="https://www.mozilla.org/zh-TW/firefox/new/" target="_blank">Firefox</a> 瀏覽器。</p>
+        <h3>2. 將日曆匯出成 <kbd>.zip</kbd> 檔</h3>
+        <p>到 <a href="https://calendar.google.com/calendar/" target="_blank">Google 日曆</a>，點選右上方設定→日曆設定→匯出日曆。</p>
+        <h3>3. 將 <kbd>.zip</kbd> 解壓縮得到 <kbd>.ics</kbd> 檔</h3>
+        <p>任何解壓縮工具都可以，推薦使用開源免費的 <a href="http://www.developershome.com/7-zip/" target="_blank">7-zip</a>。</p>
+        <p>每一個 <a href="http://fileinfo.com/extension/ics" target="_blank">.ics 檔</a>都對應到你的每一個日曆。</p>
+        <h3>4. 在下方按鈕選擇 <kbd>.ics</kbd> 檔</h3>
+        <br/>
+        <input type="file" id="input_file" />
+        <hr/>
+        <h3> 6. 可下載成 Excel 檔</h3>
+        <div id="div_download"></div>
+      </div>
+      <div class="col-xs-12 col-md-6">
+        <h3> 5. 前 10 筆資料會顯示在這裡面</h3>
+        <div id="div_result_file_name"></div>
+        <div id="div_result_table"></div>
+      </div>
+    </div>
+        <hr/> Source code on Github. 有疑問或需求請自行修改或至 Github 回報。
+  </div>
+</body>
+
+</html>
