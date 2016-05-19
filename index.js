@@ -56,6 +56,7 @@ class EventRecord {
 
 $(function() {
   $('#panel_check_boxes').hide();
+  $('#div_main_panel').hide();
 
   $('#input_file').change(function(e) {
     $('#div_download').empty();
@@ -68,6 +69,7 @@ $(function() {
     let fileReader = new FileReader();
     fileReader.readAsText(INPUT_FILE);
     fileReader.onload = function() {
+      $('#div_main_panel').show();
       eventRecords = [];
       parseInputFile(fileReader.result.split('\n'));
       sortEventRecords();
@@ -179,7 +181,7 @@ function printResults() {
   str += '<th>人物</th>';
   str += '<th>事件</th>';
   str += '</tr></table>';
-  $("#graph").append(str);
+  $("#tab_records").append(str);
 
   // 將出現在日曆事件內的 @人物 與 #標籤 都儲存起來，作為顯示欄位的選項
   let _CB_SCORES = {1: 0, 2: 0, 3: 0};
@@ -204,9 +206,9 @@ function printResults() {
 
 
   // 設定顯示欄位
-  prepareSetCheckBoxes('li_checkbox_scores', _SCORE_MSG, false, _CB_SCORES);
-  prepareSetCheckBoxes('li_checkbox_friends', '', true, _CB_FRIENDS);
-  prepareSetCheckBoxes('li_checkbox_tags', '', true, _CB_TAGS);
+  prepareSetCheckBoxes('scores', _SCORE_MSG, false, _CB_SCORES);
+  prepareSetCheckBoxes('friends', '', true, _CB_FRIENDS);
+  prepareSetCheckBoxes('tags', '', true, _CB_TAGS);
   $('#panel_check_boxes').show();
   // 全部勾選按鈕
   $('#btn_check_all').click(function() {
@@ -242,9 +244,16 @@ function setCheckUncheck(key, flag) {
   }
 }
 
-
 function prepareSetCheckBoxes(divID, prepend, sortFlag, dict) {
   // 由於 dictionary/hashMap/associateArray 無法排序，故先用可排序的 array 包起來
+  const arr = sortByValue(sortFlag, dict);
+  for (let i = 0; i < arr.length; i++) {
+    setCheckBoxes(divID, prepend + arr[i].key, arr[i].value);
+  }
+  // 畫圖
+  drawPieChart(divID, arr);
+}
+function sortByValue(sortFlag, dict) {
   let tmpArray = [];
   for (const key in dict) {
     if ({}.hasOwnProperty.call(dict, key)) {
@@ -258,13 +267,11 @@ function prepareSetCheckBoxes(divID, prepend, sortFlag, dict) {
       return b.value - a.value;
     });
   }
-  for (let i = 0; i < tmpArray.length; i++) {
-    setCheckBoxes(divID, prepend + tmpArray[i].key, tmpArray[i].value);
-  }
+  return tmpArray;
 }
 function setCheckBoxes(divID, key, value) {
   // 建立 DOM
-  $('#' + divID).append('<label><input type="checkbox" checked="checked" ' +
+  $('#li_checkbox_' + divID).append('<label><input type="checkbox" checked="checked" ' +
       ' id="cb_' + key + '" > ' + key + '：' + value + '</label><br/>');
   // 綁定 DOM 的 EventListener
   $('#cb_' + key).click(function() {
@@ -297,4 +304,46 @@ function getCustomizedTD(elements) {
     return '<td>' + _NULL + '</td>';
   }
   return '<td class="' + elements.join(' ') + '">' + elements.join(',') + '</td>';
+}
+
+
+
+
+
+function drawPieChart(divID, arr) {
+  const ctxPie = $('#canvas_pie_' + divID);
+  const ctxBar = $('#canvas_bar_' + divID);
+  const options = {
+  };
+
+  const keys = arr.map((item) => item.key);
+  console.log(keys);
+  const values = arr.map((item) => item.value);
+  console.log(values);
+  const data = {
+    labels: keys.slice(0, 10),
+    datasets: [{
+      label: divID,
+      data: values.slice(0, 10),
+      backgroundColor: [
+        "#FF6384",
+        "#ffa726",
+        "#fff176",
+        "#69f0ae",
+        "#00e5ff",
+        "#1a237e",
+        "#9575cd"
+      ]
+    }]
+  };
+  const myDoughnutChart = new Chart(ctxPie, {
+    type: 'doughnut',
+    data: data,
+    options: options
+  });
+  const myBarChart = new Chart(ctxBar, {
+    type: 'bar',
+    data: data,
+    options: options
+  });
 }

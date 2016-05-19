@@ -24,7 +24,11 @@
       "no-multiple-empty-lines": "off",
       "require-jsdoc": "off",
       "no-var": "error",
+      "arrow-parens": ["error", "always"],
       "indent": ["error", 2]
+    },
+    "globals": {
+        "Chart": false
     }
   }
 }

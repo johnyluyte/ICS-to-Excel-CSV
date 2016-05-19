@@ -7,6 +7,7 @@
   <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
   <script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.min.js"></script>
   <script type="text/javascript" src="index.js"></script>
   <style type="text/css">
   body {
@@ -37,30 +38,25 @@
   td.分數3 {
     background-color: #69f0ae;
   }
-  /*   #panel_check_boxes {
-    position:fixed;
-    right:10%;
-    top:15%;
-    min-width: 150px;
-  }
- */
   </style>
 </head>
 
 <body>
   <div class="container">
-    <!-- <h1 class="page-header">Google 日曆 ics 轉 Excel/CSV，圖表版</h1> -->
+    <h1 class="page-header">Google 日曆 ics 轉 Excel/CSV，日記版</h1>
     <div class="row">
-      <div class="col-md-6">
-        <!--         <h3>1. 使用支援 ES6 之瀏覽器</h3>
-        <p>同 <a href="http://chunnorris.cc/demo/ics-csv/" target="_blank">基本版</a>，但可將日曆中
+      <div class="col-md-4">
+        <h3>1. 使用說明</h3>
+        <p>同 <a href="http://chunnorris.cc/demo/ics-csv/" target="_blank">基本版</a>，請使用支援 ES6 之瀏覽器。可將日曆中
           <mark>[分數] 事情@人#標籤</mark> 格式的紀錄輸出成簡易圖表。</p>
- -->
-        <input type="file" id="input_file" />
-        <!-- ※ 若已選擇檔案，下次選擇檔案前請先重新整理此頁面。 -->
       </div>
-      <div class="col-md-6">
-        <h3> 2. 可下載成 Excel 檔</h3>
+      <div class="col-md-4">
+        <h3> 2. 選擇日記 ics 檔案</h3>
+        <input type="file" id="input_file" />
+        (若已選擇檔案，下次選擇檔案前請先重新整理此頁面。)
+      </div>
+      <div class="col-md-4">
+        <h3> 4. 可下載成 Excel 檔</h3>
         <div id="div_download"></div>
       </div>
     </div>
@@ -68,21 +64,42 @@
     <div class="row">
       <div class="col-md-10">
         <div id="div_main_panel" class="panel panel-success">
-          <div class="panel-heading text-center"><strong>事件</strong></div>
+          <div class="panel-heading text-center"><h3>3. 點選下方圖表總覽 / 詳細紀錄</h3></div>
           <div id="div_main_tabs">
             <ul class="nav nav-tabs">
-              <li class="active"><a data-toggle="tab" href="#graph">graph</a></li>
-              <li><a data-toggle="tab" href="#tab_overview">總覽</a></li>
+              <li class="active"><a data-toggle="tab" href="#tab_overview">圖表總覽</a></li>
+              <li><a data-toggle="tab" href="#tab_records">詳細紀錄</a></li>
             </ul>
             <div class="tab-content">
-              <div id="graph" class="tab-pane fade in active">
-                <h3>graph</h3>
-                <h5>新增 Summary 總覽次數統計</h5>
-                <h5>新增 年分日期 divider，或用 tooltip 顯示在左邊？</h5>
-                <h5>無法解析的欄位： 可忽略</h5>
+              <div id="tab_overview" class="tab-pane fade in active">
+                <div class="row">
+                  <div class="col-md-6">
+                    <canvas id="canvas_pie_scores" width="400" height="400"></canvas>
+                  </div>
+                  <div class="col-md-6">
+                    <canvas id="canvas_bar_scores" width="400" height="400"></canvas>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-md-6">
+                    <canvas id="canvas_pie_friends" width="400" height="400"></canvas>
+                  </div>
+                  <div class="col-md-6">
+                    <canvas id="canvas_bar_friends" width="400" height="400"></canvas>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-md-6">
+                    <canvas id="canvas_pie_tags" width="400" height="400"></canvas>
+                  </div>
+                  <div class="col-md-6">
+                    <canvas id="canvas_bar_tags" width="400" height="400"></canvas>
+                  </div>
+                </div>
               </div>
-              <div id="tab_overview" class="tab-pane fade">
-                <h3>總覽</h3>
+              <div id="tab_records" class="tab-pane fade">
               </div>
             </div>
           </div>
@@ -90,7 +107,7 @@
       </div>
       <div class="col-md-2">
         <div id="panel_check_boxes" class="panel panel-info">
-          <div class="panel-heading text-center"><strong>顯示欄位</strong></div>
+          <div class="panel-heading text-center"><h3>4. 顯示欄位</h3></div>
           <ul class="list-group">
             <li class="list-group-item">
               <button id="btn_check_all" class="btn btn-block btn-primary">全部勾選</button>
