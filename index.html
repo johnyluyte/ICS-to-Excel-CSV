@@ -6,44 +6,116 @@
   <title>Google Calendar ics to CSV</title>
   <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
   <script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
   <script type="text/javascript" src="index.js"></script>
   <style type="text/css">
+  body {
+    font-size: 1.4rem;
+  }
+
   h3 {
     color: #2D866C;
   }
+
   kbd {
     color: #222;
     background-color: #ddd;
   }
+
+  #div_main_tabs {
+    margin: 10px;
+  }
+
+  td.分數1 {
+    background-color: #ff5252;
+  }
+
+  td.分數2 {
+    background-color: #f4ff81;
+  }
+
+  td.分數3 {
+    background-color: #69f0ae;
+  }
+  /*   #panel_check_boxes {
+    position:fixed;
+    right:10%;
+    top:15%;
+    min-width: 150px;
+  }
+ */
   </style>
 </head>
 
 <body>
   <div class="container">
-    <h1 class="page-header">Google 日曆 ics 轉 Excel/CSV</h1>
+    <!-- <h1 class="page-header">Google 日曆 ics 轉 Excel/CSV，圖表版</h1> -->
     <div class="row">
-      <div class="col-xs-12 col-md-6">
-        <h3>1. 使用支援 ES6 之瀏覽器</h3>
-        <p>請使用最新版 <a href="https://www.google.com.tw/chrome/browser/desktop/" target="_blank">Google Chrome</a> 或 <a href="https://www.mozilla.org/zh-TW/firefox/new/" target="_blank">Firefox</a> 瀏覽器。</p>
-        <h3>2. 將日曆匯出成 <kbd>.zip</kbd> 檔</h3>
-        <p>到 <a href="https://calendar.google.com/calendar/" target="_blank">Google 日曆</a>，點選右上方設定→日曆設定→匯出日曆。</p>
-        <h3>3. 將 <kbd>.zip</kbd> 解壓縮得到 <kbd>.ics</kbd> 檔</h3>
-        <p>任何解壓縮工具都可以，推薦使用開源免費的 <a href="http://www.developershome.com/7-zip/" target="_blank">7-zip</a>。</p>
-        <p>每一個 <a href="http://fileinfo.com/extension/ics" target="_blank">.ics 檔</a>都對應到你的每一個日曆。</p>
-        <h3>4. 在下方按鈕選擇 <kbd>.ics</kbd> 檔</h3>
-        <br/>
+      <div class="col-md-6">
+        <!--         <h3>1. 使用支援 ES6 之瀏覽器</h3>
+        <p>同 <a href="http://chunnorris.cc/demo/ics-csv/" target="_blank">基本版</a>，但可將日曆中
+          <mark>[分數] 事情@人#標籤</mark> 格式的紀錄輸出成簡易圖表。</p>
+ -->
         <input type="file" id="input_file" />
-        <hr/>
-        <h3> 6. 可下載成 Excel 檔</h3>
+        <!-- ※ 若已選擇檔案，下次選擇檔案前請先重新整理此頁面。 -->
+      </div>
+      <div class="col-md-6">
+        <h3> 2. 可下載成 Excel 檔</h3>
         <div id="div_download"></div>
       </div>
-      <div class="col-xs-12 col-md-6">
-        <h3> 5. 前 10 筆資料會顯示在這裡面</h3>
-        <div id="div_result_file_name"></div>
-        <div id="div_result_table"></div>
+    </div>
+    <hr/>
+    <div class="row">
+      <div class="col-md-10">
+        <div id="div_main_panel" class="panel panel-success">
+          <div class="panel-heading text-center"><strong>事件</strong></div>
+          <div id="div_main_tabs">
+            <ul class="nav nav-tabs">
+              <li class="active"><a data-toggle="tab" href="#graph">graph</a></li>
+              <li><a data-toggle="tab" href="#tab_overview">總覽</a></li>
+            </ul>
+            <div class="tab-content">
+              <div id="graph" class="tab-pane fade in active">
+                <h3>graph</h3>
+                <h5>新增 Summary 總覽次數統計</h5>
+                <h5>新增 年分日期 divider，或用 tooltip 顯示在左邊？</h5>
+                <h5>無法解析的欄位： 可忽略</h5>
+              </div>
+              <div id="tab_overview" class="tab-pane fade">
+                <h3>總覽</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div id="panel_check_boxes" class="panel panel-info">
+          <div class="panel-heading text-center"><strong>顯示欄位</strong></div>
+          <ul class="list-group">
+            <li class="list-group-item">
+              <button id="btn_check_all" class="btn btn-block btn-primary">全部勾選</button>
+              <button id="btn_uncheck_all" class="btn btn-block btn-warning">全部取消</button>
+            </li>
+            <li class="list-group-item text-center">
+              <strong>依照 [分數]</strong>
+            </li>
+            <li id='li_checkbox_scores' class="list-group-item">
+            </li>
+            <li class="list-group-item text-center">
+              <strong>依照 @人物</strong>
+            </li>
+            <li id='li_checkbox_friends' class="list-group-item">
+            </li>
+            <li class="list-group-item text-center">
+              <strong>依照 #標籤</strong>
+            </li>
+            <li id='li_checkbox_tags' class="list-group-item">
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
-        <hr/> Source code on <a href="https://github.com/johnyluyte/ICS-to-Excel-CSV" target="_blank">Github</a>. 有疑問或需求請自行修改或至 Github 回報。
+    <hr/> Source code on <a href="https://github.com/johnyluyte/ICS-to-Excel-CSV" target="_blank">Github</a>. 有疑問或需求請自行修改或至 Github 回報。
   </div>
 </body>
 
